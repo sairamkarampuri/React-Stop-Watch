@@ -3,28 +3,39 @@ import {Component} from 'react'
 import './index.css'
 
 class Stopwatch extends Component {
-  state = {minutes: 0, seconds: 0}
+  state = {minutes: 0, seconds: 0, isTimerRunning: false}
 
   clearTimerInterval = () => clearInterval(this.timerId)
 
   onStartTimer = () => {
-    this.timerId = setInterval(this.stopwatch, 1000)
+    const {isTimerRunning} = this.state
+    if (!isTimerRunning) {
+      this.timerId = setInterval(this.stopwatch, 1000)
+    }
   }
 
   stopwatch = () => {
     const {seconds} = this.state
+
     if (seconds === 59) {
       this.setState(prevState => ({
         seconds: 0,
         minutes: prevState.minutes + 1,
       }))
     } else {
-      this.setState(prevState => ({seconds: prevState.seconds + 1}))
+      this.setState(prevState => ({
+        seconds: prevState.seconds + 1,
+        isTimerRunning: true,
+      }))
     }
   }
 
   onStopTimer = () => {
-    this.clearTimerInterval()
+    const {isTimerRunning} = this.state
+    if (isTimerRunning) {
+      this.clearTimerInterval()
+      this.setState({isTimerRunning: false})
+    }
   }
 
   onResetTimer = () => {
@@ -32,6 +43,7 @@ class Stopwatch extends Component {
     this.setState({
       seconds: 0,
       minutes: 0,
+      isTimerRunning: false,
     })
   }
 
